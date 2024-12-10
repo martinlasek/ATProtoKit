@@ -74,22 +74,28 @@ public class ATProtocolConfiguration: SessionConfiguration {
         pdsURL: String = "https://bsky.social",
         configuration: URLSessionConfiguration = .default,
 //        userAgent: ATProtoTools.UserAgent = .default,
-        logIdentifier: String? = nil,
-        logCategory: String? = nil,
-        logLevel: Logger.Level? = .info
+        loggingConfiguration: LoggingConfiguration
     ) {
         self.handle = handle
         self.password = appPassword
         self.pdsURL = !pdsURL.isEmpty ? pdsURL : "https://bsky.social"
         self.configuration = configuration
 //        self.userAgent = userAgent
-        self.logIdentifier = logIdentifier ?? Bundle.main.bundleIdentifier ?? "com.cjrriley.ATProtoKit"
-        self.logCategory = logCategory ?? "ATProtoKit"
-        self.logLevel = logLevel
+        self.logIdentifier = loggingConfiguration.logIdentifier ?? Bundle.main.bundleIdentifier ?? "com.cjrriley.ATProtoKit"
+        self.logCategory = loggingConfiguration.logCategory ?? "ATProtoKit"
+        self.logLevel = loggingConfiguration.logLevel
 
-        Task { [configuration] in
-            await ATProtocolConfiguration.loggerManager.setupLog(logCategory: logCategory, logLevel: logLevel, logIdentifier: logIdentifier)
-            await APIClientService.shared.configure(with: configuration)
+        Task {
+            let config = configuration
+            if loggingConfiguration.isLoggingEnabled {
+                await ATProtocolConfiguration.loggerManager.setupLog(
+                    logCategory: logCategory,
+                    logLevel: logLevel,
+                    logIdentifier: logIdentifier
+                )
+            }
+
+            await APIClientService.shared.configure(with: config)
         }
     }
 
