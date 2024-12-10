@@ -14,7 +14,7 @@ public struct LoggingConfiguration {
     let logCategory: String?
     let logLevel: Logger.Level?
 
-    init (
+    public init (
         isLoggingEnabled: Bool = true,
         logIdentifier: String? = nil,
         logCategory: String? = nil,
@@ -26,7 +26,7 @@ public struct LoggingConfiguration {
         self.logLevel = logLevel
     }
 
-    static func disabled() -> LoggingConfiguration {
+    public static func disabled() -> LoggingConfiguration {
         LoggingConfiguration(isLoggingEnabled: false)
     }
 }
